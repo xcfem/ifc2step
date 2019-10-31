@@ -1,2 +1,2 @@
-# ifc2step
-Convert an IFC file to STEP using ifcplusplus.
+# ifcpp_example
+Example of using ifcplusplus libraries with CMake on Linux.

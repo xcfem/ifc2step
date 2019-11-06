@@ -2,8 +2,10 @@
 #include <ifcpp/IFC4/include/IfcGloballyUniqueId.h>
 #include <ifcpp/model/BuildingModel.h>
 #include <ifcpp/reader/ReaderSTEP.h>
+#include <ifcpp/writer/WriterSTEP.h>
 #include <codecvt>
 #include <locale>
+#include <fstream>
 
 template<class I, class E, class S>
 struct codecvt : std::codecvt<I, E, S>
@@ -30,7 +32,7 @@ int main(int argc, char* argv[])
 	const std::wstring fileName= char_ptr_to_wstring(argv[1]);
 	// load the model:
 	step_reader->loadModelFromFile(fileName, ifc_model);
-
+	
 	// get a map of all loaded IFC entities:
 	const std::map<int, shared_ptr<BuildingEntity> >& map_entities = ifc_model->getMapIfcEntities();
 
@@ -49,6 +51,15 @@ int main(int argc, char* argv[])
 		    }
 	      }
 	  }
+	
+	std::stringstream stream;
+	shared_ptr<WriterSTEP> step_writer(new WriterSTEP());
+	step_writer->writeModelToStream(stream, ifc_model);
+	ifc_model->clearIfcModel();
+        std::ofstream ofs("./pp.stp", std::ofstream::out);
+	ofs << stream.str().c_str();
+	ofs.close();
+
       }
     else
       std::cerr << "syntax: " << argv[0] << " input_file" << std::endl;
